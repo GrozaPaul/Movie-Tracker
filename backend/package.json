@@ -4,7 +4,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "devstart": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "npm run migration:run && nodemon server.js",
+    "migration:create": "typeorm migration:create migrations/newName",
+    "migration:run": "node --loader ts-node/esm ./node_modules/typeorm/cli.js migration:run -d typeorm-config.js",
+    "migration:revert": "node --loader ts-node/esm ./node_modules/typeorm/cli.js migration:revert -d typeorm-config.js",
+    "migration:show": "node --loader ts-node/esm ./node_modules/typeorm/cli.js migration:show -d typeorm-config.js",
+    "schema:drop": "node --loader ts-node/esm ./node_modules/typeorm/cli.js schema:drop -d typeorm-config.js",
+    "schema:sync": "node --loader ts-node/esm ./node_modules/typeorm/cli.js schema:sync -d typeorm-config.js"
   },
   "repository": {
     "type": "git",
@@ -17,14 +24,23 @@
   },
   "homepage": "https://github.com/GrozaPaul/Licenta#readme",
   "devDependencies": {
+    "@types/node": "^25.0.8",
+    "dotenv": "^17.2.3",
     "nodemon": "^3.1.11",
-    "prettier": "3.6.2"
+    "prettier": "3.6.2",
+    "ts-node": "^10.9.2"
   },
   "keywords": [],
   "description": "",
   "dependencies": {
-    "dotenv": "^17.2.3",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
     "express": "^5.2.1",
-    "morgan": "^1.10.1"
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28"
   }
 }
