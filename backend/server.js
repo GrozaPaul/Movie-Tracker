@@ -1,5 +1,5 @@
 import express from "express";
-import userRouter from "./features/user/user.routes.js";
+import userRouter from "./features/user/userRoutes.js";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";

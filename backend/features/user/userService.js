@@ -1,6 +1,6 @@
-import * as userRepository from "./user.repository.js";
+import * as userRepository from "./userRepository.js";
 import bcrypt from "bcrypt";
-import { generateToken } from "../../utils/JWT.js";
+import { generateToken } from "../../utils/jwt.js";
 
 export const createUser = async (username, email, password) => {
   if (await userRepository.exitsByUsername(username))
