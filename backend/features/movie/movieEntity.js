@@ -53,4 +53,21 @@ export const Movie = new EntitySchema({
       length: 255,
     },
   },
+  relations: {
+    genres: {
+      type: "one-to-many",
+      target: "MovieGenre",
+      inverseSide: "movie",
+    },
+    actors: {
+      type: "one-to-many",
+      target: "MovieActor",
+      inverseSide: "movie",
+    },
+    studios: {
+      type: "one-to-many",
+      target: "StudioMovies",
+      inverseSide: "movie",
+    },
+  },
 });

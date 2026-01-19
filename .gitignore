@@ -6,3 +6,4 @@ gen
 /backend/node_modules
 
 .env
+movie_tracker_uc.png
