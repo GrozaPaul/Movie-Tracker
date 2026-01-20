@@ -9,14 +9,15 @@ export const MovieActor = new EntitySchema({
       primary: true,
       name: "movie_id",
     },
-    actorName: {
-      type: "varchar",
-      primary: true,
-      name: "actor_name",
-    },
     characterName: {
       type: "varchar",
       name: "character_name",
+      length: 255,
+    },
+    personId: {
+      type: "bigint",
+      primary: true,
+      name: "person_id",
     },
   },
   relations: {
@@ -26,6 +27,14 @@ export const MovieActor = new EntitySchema({
       joinColumn: {
         name: "movie_id",
         referencedColumnName: "movieId",
+      },
+    },
+    person: {
+      type: "many-to-one",
+      target: "Person",
+      joinColumn: {
+        name: "person_id",
+        referencedColumnName: "personId",
       },
     },
   },

@@ -48,7 +48,12 @@ export const Movie = new EntitySchema({
       array: true,
       name: "spoken_languages",
     },
-    director: {
+    originalTitle: {
+      type: "varchar",
+      length: 255,
+      name: "original_title",
+    },
+    tagline: {
       type: "varchar",
       length: 255,
     },
@@ -62,6 +67,11 @@ export const Movie = new EntitySchema({
     actors: {
       type: "one-to-many",
       target: "MovieActor",
+      inverseSide: "movie",
+    },
+    directors: {
+      type: "one-to-many",
+      target: "MovieDirector",
       inverseSide: "movie",
     },
     studios: {
