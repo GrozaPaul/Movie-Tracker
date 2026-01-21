@@ -1,5 +1,5 @@
 import { verifyToken } from "../utils/jwt.js";
-import * as userRepository from "../features/user/userRepository.js";
+import * as userRepository from "../features/user/user-repository.js";
 
 export const authenticate = async (req, res, next) => {
   try {

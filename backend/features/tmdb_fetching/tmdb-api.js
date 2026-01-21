@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-export const fetchMovieIdsByDiscoverTMDB = async (totalPages = 1000) => {
+export const fetchMovieIdsByDiscoverTMDB = async (totalPages = 500) => {
   const allMovieIds = [];
   const batchSize = 10;
 
@@ -100,6 +100,62 @@ export const fetchMovieDetailsByIds = async (movieIds) => {
   }
 
   return allMoviesData; // Returns array of complete movie objects with credits and production companies
+};
+
+export const fetchPeopleDetailsByIds = async (personIds) => {
+  const allPeopleData = [];
+  const batchSize = 10;
+
+  for (let i = 0; i < personIds.length; i += batchSize) {
+    const batch = [];
+    const currentBatch = personIds.slice(i, i + batchSize);
+
+    for (const personId of currentBatch) {
+      const url = `https://api.themoviedb.org/3/person/${personId}?language=en-US`;
+
+      batch.push(
+        fetch(url, {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${process.env.TMDB_TOKEN}`,
+          },
+        }).then((res) => res.json()),
+      );
+    }
+
+    try {
+      const results = await Promise.all(batch);
+      allPeopleData.push(...results);
+
+      console.log(
+        `Fetched people batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(personIds.length / batchSize)} - Total: ${allPeopleData.length}`,
+      );
+    } catch (error) {
+      console.error(`Batch error fetching people:`, error);
+    }
+  }
+
+  return allPeopleData;
+};
+
+export const fetchPersonDetails = async (personId) => {
+  const url = `https://api.themoviedb.org/3/person/${personId}?language=en-US`;
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${process.env.TMDB_TOKEN}`,
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching person ${personId}:`, error);
+    throw error;
+  }
 };
 
 // TMDB - Search/Movie
