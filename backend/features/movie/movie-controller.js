@@ -1,5 +1,5 @@
-import * as movieService from "./movieService.js";
-import { fetchMovieDataTMDB } from "./movieService.js";
+import * as movieService from "./movie-service.js";
+import { fetchMovieDataTMDB } from "./movie-service.js";
 
 export const initSaveMoviesFromTMDB = async (_, res) => {
   try {

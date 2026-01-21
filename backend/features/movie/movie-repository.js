@@ -1,5 +1,5 @@
 import { AppDataSource } from "../../typeorm-config.js";
-import { Movie } from "./movieEntity.js";
+import { Movie } from "./movie-entity.js";
 
 const movieRepository = AppDataSource.getRepository(Movie);
 

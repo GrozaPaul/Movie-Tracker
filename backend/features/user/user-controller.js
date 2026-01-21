@@ -1,5 +1,5 @@
-import { createUserDto, loginUserDto } from "./userDto.js";
-import * as userService from "./userService.js";
+import { createUserDto, loginUserDto } from "./user-dto.js";
+import * as userService from "./user-service.js";
 
 export const createUser = async (req, res) => {
   try {

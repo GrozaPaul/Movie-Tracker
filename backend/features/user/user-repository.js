@@ -1,5 +1,5 @@
 import { AppDataSource } from "../../typeorm-config.js";
-import { User } from "./userEntity.js";
+import { User } from "./user-entity.js";
 
 const userRepository = AppDataSource.getRepository(User);
 
