@@ -4,7 +4,7 @@ import { MovieGenre } from "../movie/movie-genre-entity.js";
 import { MovieActor } from "../person/movie-actor-entity.js";
 import { MovieDirector } from "../person/movie-director-entity.js";
 import { StudioMovies } from "../movie/studio-movies-entity.js";
-import { AppDataSource } from "../../typeorm-config.js";
+import { AppDataSource, initializeDatabase } from "../../typeorm-config.js";
 
 const movieRepository = AppDataSource.getRepository(Movie);
 const personRepository = AppDataSource.getRepository(Person);
