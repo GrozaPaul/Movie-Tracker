@@ -14,8 +14,7 @@ export const Movie = new EntitySchema({
       length: 255,
     },
     overview: {
-      type: "varchar",
-      length: 255,
+      type: "text",
     },
     releaseDate: {
       type: "varchar",
@@ -37,11 +36,12 @@ export const Movie = new EntitySchema({
     },
     country: {
       type: "varchar",
-      length: 20,
+      length: 500,
     },
     originalLanguage: {
       type: "varchar",
       length: 50,
+      name: "original_language",
     },
     spokenLanguages: {
       type: "varchar",

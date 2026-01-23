@@ -3,6 +3,13 @@ import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
+import { User } from "./features/user/user-entity.js";
+import { Person } from "./features/person/person-entity.js";
+import { MovieDirector } from "./features/person/movie-director-entity.js";
+import { MovieActor } from "./features/person/movie-actor-entity.js";
+import { StudioMovies } from "./features/movie/studio-movies-entity.js";
+import { MovieGenre } from "./features/movie/movie-genre-entity.js";
+import { Movie } from "./features/movie/movie-entity.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +24,15 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: false,
   logging: process.env.NODE_ENV === "development",
-  entities: ["features/**/*.entity.js"],
+  entities: [
+    User,
+    Movie,
+    Person,
+    MovieActor,
+    MovieDirector,
+    StudioMovies,
+    MovieGenre,
+  ],
   migrations: ["migrations/**/*.js"],
   migrationsTableName: "migrations",
   subscribers: [],
