@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import { initializeDatabase } from "./typeorm-config.js";
+import seedingRouter from "./features/tmdb-fetching/tmdb-fetching-controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,7 @@ app.use(express.json());
 // });
 
 app.use("/api/user", userRouter);
+app.use("/test", seedingRouter);
 
 const startServer = async () => {
   try {

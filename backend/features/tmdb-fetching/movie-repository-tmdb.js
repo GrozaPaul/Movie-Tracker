@@ -17,6 +17,21 @@ export const movieExists = async (movieId) => {
   return await movieRepository.existsBy({ movieId });
 };
 
+export const getAllExistingMovieIds = async () => {
+  const movies = await movieRepository.find({
+    select: ["movieId"],
+  });
+  return movies.map((movie) => movie.movieId);
+};
+
+export const getAllExistingPersonIds = async () => {
+  const people = await personRepository.find({
+    select: ["personId"],
+  });
+
+  return people.map((person) => person.personId);
+};
+
 export const personExists = async (personId) => {
   return await personRepository.existsBy({ personId });
 };
@@ -40,58 +55,70 @@ export const saveMovie = async (movie) => {
 };
 
 export const saveGenresForMovie = async (movieId, genres) => {
+  if (!genres || genres.length === 0) return [];
+
   const genreRecords = genres.map((genre) => ({
     movieId,
     genreName: genre.name,
   }));
 
-  try {
-    return await movieGenreRepository.save(genreRecords);
-  } catch (error) {
-    if (error.code === "23505") return null;
-    throw error;
-  }
+  return await movieGenreRepository
+    .createQueryBuilder()
+    .insert()
+    .into(MovieGenre)
+    .values(genreRecords)
+    .orIgnore()
+    .execute();
 };
 
 export const saveActorsForMovie = async (movieId, actors) => {
+  if (!actors || actors.length === 0) return [];
+
   const actorRecords = actors.map((actor) => ({
     movieId,
-    characterName: actor.character,
+    characterName: actor.character || "",
     personId: actor.id,
   }));
 
-  try {
-    return await movieActorRepository.save(actorRecords);
-  } catch (error) {
-    if (error.code === "23505") return null;
-    throw error;
-  }
+  return await movieActorRepository
+    .createQueryBuilder()
+    .insert()
+    .into(MovieActor)
+    .values(actorRecords)
+    .orIgnore()
+    .execute();
 };
 
 export const saveDirectorsForMovie = async (movieId, directors) => {
+  if (!directors || directors.length === 0) return [];
+
   const directorRecords = directors.map((director) => ({
     movieId,
     personId: director.id,
   }));
 
-  try {
-    return await movieDirectorRepository.save(directorRecords);
-  } catch (error) {
-    if (error.code === "23505") return null;
-    throw error;
-  }
+  return await movieDirectorRepository
+    .createQueryBuilder()
+    .insert()
+    .into(MovieDirector)
+    .values(directorRecords)
+    .orIgnore()
+    .execute();
 };
 
 export const saveStudiosForMovie = async (movieId, studios) => {
+  if (!studios || studios.length === 0) return [];
+
   const studioRecords = studios.map((studio) => ({
     movieId,
     studioName: studio.name,
   }));
 
-  try {
-    return await studioMovieRepository.save(studioRecords);
-  } catch (error) {
-    if (error.code === "23505") return null;
-    throw error;
-  }
+  return await studioMovieRepository
+    .createQueryBuilder()
+    .insert()
+    .into(StudioMovies)
+    .values(studioRecords)
+    .orIgnore()
+    .execute();
 };
