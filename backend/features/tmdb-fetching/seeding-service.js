@@ -62,27 +62,58 @@ const transformMovieData = (tmdbMovie) => {
   };
 };
 
+const filterMovieIdsToBeNew = async (movieIds) => {
+  const existingMovieIdsSet = new Set(
+    await movieRepoTmdb.getAllExistingMovieIds(),
+  );
+  return movieIds.filter((id) => !existingMovieIdsSet.has(id));
+};
+
+const filterPersonIdsToBeNew = async (personIds) => {
+  const existingPersonIdsSet = new Set(
+    await movieRepoTmdb.getAllExistingPersonIds(),
+  );
+  return personIds.filter((id) => !existingPersonIdsSet.has(id));
+};
+
+const filterMovies = (movies) => {
+  return movies.filter((movie) => Number(movie.runtime) >= 60);
+};
+
 export const seeding = async (totalPagesToFetch = 500) => {
   try {
     console.log("I. Fetching movie IDs\n");
-    const movieIds =
-      await tmdbApi.fetchMovieIdsByDiscoverTMDB(totalPagesToFetch);
+    const movieIds = [
+      ...new Set(await tmdbApi.fetchMovieIdsByDiscoverTMDB(totalPagesToFetch)),
+    ];
     console.log(`Fetched ${movieIds.length} movie IDs\n`);
 
+    const newMovieIds = await filterMovieIdsToBeNew(movieIds);
+    console.log(
+      `Filtered down to ${newMovieIds.length} new movies (${movieIds.length - newMovieIds.length} already exist)`,
+    );
+
     console.log("II. Fetching movies details\n");
-    const movies = await tmdbApi.fetchMovieDetailsByIds(movieIds);
+    const movies = await tmdbApi.fetchMovieDetailsByIds(newMovieIds);
     console.log(`Fetched ${movies.length} movies\n`);
+
+    const filteredMovies = filterMovies(movies);
 
     console.log("III. Extracting unique people IDs\n");
     const { actorsIds, directorsIds } =
-      extractUniqueActorsAndDirectorsIds(movies);
+      extractUniqueActorsAndDirectorsIds(filteredMovies);
     const allPersonIds = [...new Set([...actorsIds, ...directorsIds])];
     console.log(
       `Found ${allPersonIds.length} unique people. ${actorsIds.length} actors, ${directorsIds.length} directors\n`,
     );
 
+    const newPersonIds = await filterPersonIdsToBeNew(allPersonIds);
+    console.log(
+      `Filtered down to ${newPersonIds.length} new people (${allPersonIds.length - newPersonIds.length} already exist)`,
+    );
+
     console.log("IV. Fetching person details\n");
-    const people = await tmdbApi.fetchPeopleDetailsByIds(allPersonIds);
+    const people = await tmdbApi.fetchPeopleDetailsByIds(newPersonIds);
     console.log(`Fetched ${people.length} person details\n`);
 
     console.log("V. Saving people to database\n");
@@ -98,7 +129,7 @@ export const seeding = async (totalPagesToFetch = 500) => {
     let savedMoviesCount = 0;
     let errorCount = 0;
 
-    for (const movie of movies) {
+    for (const movie of filteredMovies) {
       try {
         const movieData = transformMovieData(movie);
         await movieRepoTmdb.saveMovie(movieData);
