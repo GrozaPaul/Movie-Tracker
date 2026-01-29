@@ -1,16 +1,10 @@
 import express from "express";
-import { seeding } from "./seeding-service.js";
-
-const methodOfGettingMovieIds = ["releasedIn: year", "from country: country"];
-
-const args = {
-  totalPagesToFetch: "integer",
-  methodOfGettingMovieIds: "string",
-};
+import crypto from "crypto";
+import { fetchMovies } from "./fetching-service.js";
 
 const fetchingController = async (req, res) => {
   try {
-    const providedToken = req.headers["x-fetch-token"];
+    const providedToken = req.headers["fetch-token"];
     const correctToken = process.env.FETCH_TOKEN;
 
     if (!providedToken) {
@@ -28,7 +22,7 @@ const fetchingController = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
-    await seeding(req.body);
+    await fetchMovies(req.body);
 
     return res.status(200).json({
       message: "Seeding started successfully",
@@ -42,7 +36,7 @@ const fetchingController = async (req, res) => {
   }
 };
 
-const seedingRouter = express.Router();
-seedingRouter.post("/fetch", fetchingController);
+const fetchingRouter = express.Router();
+fetchingRouter.post("/fetch", fetchingController);
 
-export default seedingRouter;
+export default fetchingRouter;

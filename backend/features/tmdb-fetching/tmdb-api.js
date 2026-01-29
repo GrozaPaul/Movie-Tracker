@@ -6,7 +6,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-export const fetchMovieIdsByDiscoverTMDB = async (totalPages = 500) => {
+export const fetchMovieIdsByDiscoverTMDB = async (options) => {
+  const { totalPages, sortBy, filters } = options;
+  const {
+    primaryReleaseYear,
+    primaryReleaseDateGte,
+    primaryReleaseDateLte,
+    withOriginCountry,
+    withOriginalLanguage,
+  } = filters;
+
   const allMovieIds = [];
   const batchSize = 10;
 
@@ -18,7 +27,16 @@ export const fetchMovieIdsByDiscoverTMDB = async (totalPages = 500) => {
       page <= Math.min(i + batchSize, totalPages);
       page++
     ) {
-      const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${page}&sort_by=popularity.desc`;
+      const url =
+        `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US` +
+        `&page=${page}` +
+        `${primaryReleaseYear !== "" ? `&primary_release_year=${primaryReleaseYear}` : ""}` +
+        `${primaryReleaseDateGte !== "" ? `&primary_release_date.gte=${primaryReleaseDateGte}` : ""}` +
+        `${primaryReleaseDateLte !== "" ? `&primary_release_date.lte=${primaryReleaseDateLte}` : ""}` +
+        `&sort_by=${sortBy}` +
+        `${withOriginCountry !== "" ? `&with_origin_country=${withOriginCountry}` : ""}` +
+        `${withOriginalLanguage !== "" ? `&with_original_language=${withOriginalLanguage}` : ""}` +
+        `&with_runtime.gte=60`;
 
       batch.push(
         fetch(url, {
@@ -54,17 +72,13 @@ export const fetchMovieIdsByDiscoverTMDB = async (totalPages = 500) => {
 };
 
 // TMDM - Movies/Details
-// (entire movie table except director,
-// movie_genre table,
-// entire studio_movies table)
 export const fetchMovieDetailsByIds = async (movieIds) => {
   const allMoviesData = [];
-  const batchSize = 10; // Process 10 movies at a time
+  const batchSize = 10;
 
   for (let i = 0; i < movieIds.length; i += batchSize) {
     const batch = [];
 
-    // Create batch of fetch promises
     const currentBatch = movieIds.slice(i, i + batchSize);
 
     for (const movieId of currentBatch) {
@@ -82,10 +96,8 @@ export const fetchMovieDetailsByIds = async (movieIds) => {
     }
 
     try {
-      // Wait for all requests in this batch to complete
       const results = await Promise.all(batch);
 
-      // Add all movie data to array
       allMoviesData.push(...results);
 
       console.log(
@@ -99,7 +111,7 @@ export const fetchMovieDetailsByIds = async (movieIds) => {
     }
   }
 
-  return allMoviesData; // Returns array of complete movie objects with credits and production companies
+  return allMoviesData;
 };
 
 export const fetchPeopleDetailsByIds = async (personIds) => {
