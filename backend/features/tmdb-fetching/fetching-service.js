@@ -1,5 +1,6 @@
 import * as tmdbApi from "./tmdb-api.js";
-import * as movieRepoTmdb from "./movie-repository-tmdb.js";
+import * as fetchingRepository from "./fetching-repository.js";
+import { initializeDatabase } from "../../typeorm-config.js";
 
 const extractUniqueActorsAndDirectorsIds = (movies) => {
   const actorIds = new Set();
@@ -49,7 +50,6 @@ const transformMovieData = (tmdbMovie) => {
     backdropPath: tmdbMovie.backdrop_path,
     posterPath: tmdbMovie.poster_path,
     runtime: tmdbMovie.runtime,
-    country: tmdbMovie.production_countries?.[0]?.name || null,
     originalLanguage:
       tmdbMovie.spoken_languages.find(
         (language) => language.iso_639_1 === tmdbMovie.original_language,
@@ -64,14 +64,14 @@ const transformMovieData = (tmdbMovie) => {
 
 const filterMovieIdsToBeNew = async (movieIds) => {
   const existingMovieIdsSet = new Set(
-    await movieRepoTmdb.getAllExistingMovieIds(),
+    await fetchingRepository.getAllExistingMovieIds(),
   );
   return movieIds.filter((id) => !existingMovieIdsSet.has(id));
 };
 
 const filterPersonIdsToBeNew = async (personIds) => {
   const existingPersonIdsSet = new Set(
-    await movieRepoTmdb.getAllExistingPersonIds(),
+    await fetchingRepository.getAllExistingPersonIds(),
   );
   return personIds.filter((id) => !existingPersonIdsSet.has(id));
 };
@@ -80,31 +80,33 @@ const filterMovies = (movies) => {
   return movies.filter((movie) => Number(movie.runtime) >= 60);
 };
 
-export const seeding = async (totalPagesToFetch = 500) => {
+export const fetchMovies = async (options) => {
   try {
     console.log("I. Fetching movie IDs\n");
     const movieIds = [
-      ...new Set(await tmdbApi.fetchMovieIdsByDiscoverTMDB(totalPagesToFetch)),
+      ...new Set(await tmdbApi.fetchMovieIdsByDiscoverTMDB(options)),
     ];
-    console.log(`Fetched ${movieIds.length} movie IDs\n`);
+    console.log(`Fetched ${movieIds.length} movie IDs from TMDB`);
 
     const newMovieIds = await filterMovieIdsToBeNew(movieIds);
-    console.log(
-      `Filtered down to ${newMovieIds.length} new movies (${movieIds.length - newMovieIds.length} already exist)`,
-    );
+    console.log(`New movies to fetch: ${newMovieIds.length}`);
+    console.log(`Already exist: ${movieIds.length - newMovieIds.length}`);
 
     console.log("II. Fetching movies details\n");
     const movies = await tmdbApi.fetchMovieDetailsByIds(newMovieIds);
-    console.log(`Fetched ${movies.length} movies\n`);
+    console.log(`Fetched details for ${movies.length} movies`);
 
     const filteredMovies = filterMovies(movies);
+    console.log(
+      `After runtime filter: ${filteredMovies.length} movies (${movies.length - filteredMovies.length} had runtime < 60)`,
+    );
 
     console.log("III. Extracting unique people IDs\n");
     const { actorsIds, directorsIds } =
       extractUniqueActorsAndDirectorsIds(filteredMovies);
     const allPersonIds = [...new Set([...actorsIds, ...directorsIds])];
     console.log(
-      `Found ${allPersonIds.length} unique people. ${actorsIds.length} actors, ${directorsIds.length} directors\n`,
+      `Found ${allPersonIds.length} unique people in ${filteredMovies.length} movies. ${actorsIds.length} actors, ${directorsIds.length} directors\n`,
     );
 
     const newPersonIds = await filterPersonIdsToBeNew(allPersonIds);
@@ -120,7 +122,7 @@ export const seeding = async (totalPagesToFetch = 500) => {
     let savedPeopleCount = 0;
     for (const person of people) {
       const personData = transformPersonData(person);
-      const saved = await movieRepoTmdb.savePerson(personData);
+      const saved = await fetchingRepository.savePerson(personData);
       if (saved) savedPeopleCount++;
     }
     console.log(`Saved ${savedPeopleCount} people\n`);
@@ -132,25 +134,30 @@ export const seeding = async (totalPagesToFetch = 500) => {
     for (const movie of filteredMovies) {
       try {
         const movieData = transformMovieData(movie);
-        await movieRepoTmdb.saveMovie(movieData);
+        await fetchingRepository.saveMovie(movieData);
 
-        await movieRepoTmdb.saveGenresForMovie(movie.id, movie.genres);
+        await fetchingRepository.saveGenresForMovie(movie.id, movie.genres);
 
         const cast = movie.credits.cast;
         if (cast.length > 0)
-          await movieRepoTmdb.saveActorsForMovie(movie.id, cast);
+          await fetchingRepository.saveActorsForMovie(movie.id, cast);
 
         const directors = movie.credits.crew.filter(
           (crew) => crew.job === "Director",
         );
         if (directors.length > 0)
-          await movieRepoTmdb.saveDirectorsForMovie(movie.id, directors);
+          await fetchingRepository.saveDirectorsForMovie(movie.id, directors);
 
         if (movie.production_companies?.length > 0)
-          await movieRepoTmdb.saveStudiosForMovie(
+          await fetchingRepository.saveStudiosForMovie(
             movie.id,
             movie.production_companies,
           );
+
+        if (movie.production_countries?.length > 0) {
+          const countryNames = movie.production_countries.map((c) => c.name);
+          await fetchingRepository.saveCountryForMovie(movie.id, countryNames);
+        }
 
         savedMoviesCount++;
       } catch (error) {

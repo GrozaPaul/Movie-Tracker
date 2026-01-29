@@ -34,10 +34,6 @@ export const Movie = new EntitySchema({
     runtime: {
       type: "bigint",
     },
-    country: {
-      type: "varchar",
-      length: 500,
-    },
     originalLanguage: {
       type: "varchar",
       length: 50,
@@ -77,6 +73,11 @@ export const Movie = new EntitySchema({
     studios: {
       type: "one-to-many",
       target: "StudioMovies",
+      inverseSide: "movie",
+    },
+    country: {
+      type: "one-to-many",
+      target: "MovieCountry",
       inverseSide: "movie",
     },
   },

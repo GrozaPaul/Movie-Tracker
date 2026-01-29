@@ -4,6 +4,7 @@ import { MovieGenre } from "../movie/movie-genre-entity.js";
 import { MovieActor } from "../person/movie-actor-entity.js";
 import { MovieDirector } from "../person/movie-director-entity.js";
 import { StudioMovies } from "../movie/studio-movies-entity.js";
+import { MovieCountry } from "../movie/movie-country-entity.js";
 import { AppDataSource, initializeDatabase } from "../../typeorm-config.js";
 
 const movieRepository = AppDataSource.getRepository(Movie);
@@ -12,16 +13,25 @@ const movieGenreRepository = AppDataSource.getRepository(MovieGenre);
 const movieActorRepository = AppDataSource.getRepository(MovieActor);
 const movieDirectorRepository = AppDataSource.getRepository(MovieDirector);
 const studioMovieRepository = AppDataSource.getRepository(StudioMovies);
+const movieCountryRepository = AppDataSource.getRepository(MovieCountry);
 
 export const movieExists = async (movieId) => {
   return await movieRepository.existsBy({ movieId });
 };
 
+// export const getAllExistingMovieIds = async () => {
+//   const movies = await movieRepository.find({
+//     select: ["movieId"],
+//   });
+//   return movies.map((movie) => movie.movieId);
+// };
+
 export const getAllExistingMovieIds = async () => {
   const movies = await movieRepository.find({
     select: ["movieId"],
   });
-  return movies.map((movie) => movie.movieId);
+
+  return movies.map((movie) => Number(movie.movieId));
 };
 
 export const getAllExistingPersonIds = async () => {
@@ -29,7 +39,7 @@ export const getAllExistingPersonIds = async () => {
     select: ["personId"],
   });
 
-  return people.map((person) => person.personId);
+  return people.map((person) => Number(person.personId));
 };
 
 export const personExists = async (personId) => {
@@ -119,6 +129,23 @@ export const saveStudiosForMovie = async (movieId, studios) => {
     .insert()
     .into(StudioMovies)
     .values(studioRecords)
+    .orIgnore()
+    .execute();
+};
+
+export const saveCountryForMovie = async (movieId, country) => {
+  if (!country || country.length === 0) return [];
+
+  const countryRecords = country.map((c) => ({
+    movieId,
+    countryName: c,
+  }));
+
+  return await movieCountryRepository
+    .createQueryBuilder()
+    .insert()
+    .into(MovieCountry)
+    .values(countryRecords)
     .orIgnore()
     .execute();
 };
