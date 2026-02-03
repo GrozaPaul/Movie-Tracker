@@ -3,7 +3,12 @@
 out
 gen
 
-/backend/node_modules
+node_modules/
 
 .env
+
 movie_tracker_uc.png
+migration-template.txt
+TODO.txt
+get-current-time.js
+updateExistingMoviesWithPictures.js
