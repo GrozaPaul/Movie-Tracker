@@ -34,6 +34,18 @@ export const getAllExistingMovieIds = async () => {
   return movies.map((movie) => Number(movie.movieId));
 };
 
+export const getAllExistingMoviesIdsAndImagePath = async () => {
+  const movies = await movieRepository.find({
+    select: ["movieId", "posterPath", "backdropPath"],
+  });
+
+  return movies.map((movie) => ({
+    id: Number(movie.movieId),
+    poster_path: movie.posterPath,
+    backdrop_path: movie.backdropPath,
+  }));
+};
+
 export const getAllExistingPersonIds = async () => {
   const people = await personRepository.find({
     select: ["personId"],

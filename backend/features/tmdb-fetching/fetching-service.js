@@ -1,6 +1,6 @@
 import * as tmdbApi from "./tmdb-api.js";
 import * as fetchingRepository from "./fetching-repository.js";
-import { initializeDatabase } from "../../typeorm-config.js";
+import * as minio from "../../minio.js";
 
 const extractUniqueActorsAndDirectorsIds = (movies) => {
   const actorIds = new Set();
@@ -80,6 +80,27 @@ const filterMovies = (movies) => {
   return movies.filter((movie) => Number(movie.runtime) >= 60);
 };
 
+export const downloadMovieImages = async (movie) => {
+  const tmdbPosterBase = "https://image.tmdb.org/t/p/w500";
+  const tmdbBackdropBase = "https://image.tmdb.org/t/p/w1280";
+
+  if (movie.poster_path) {
+    const objectName = `posters/${movie.id}_poster.jpg`;
+    await minio.uploadImageFromUrl(
+      objectName,
+      `${tmdbPosterBase}${movie.poster_path}`,
+    );
+  }
+
+  if (movie.backdrop_path) {
+    const objectName = `backdrops/${movie.id}_backdrop.jpg`;
+    await minio.uploadImageFromUrl(
+      objectName,
+      `${tmdbBackdropBase}${movie.backdrop_path}`,
+    );
+  }
+};
+
 export const fetchMovies = async (options) => {
   try {
     console.log("I. Fetching movie IDs\n");
@@ -135,6 +156,7 @@ export const fetchMovies = async (options) => {
       try {
         const movieData = transformMovieData(movie);
         await fetchingRepository.saveMovie(movieData);
+        await downloadMovieImages(movie);
 
         await fetchingRepository.saveGenresForMovie(movie.id, movie.genres);
 

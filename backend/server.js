@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import { initializeDatabase } from "./typeorm-config.js";
+import { initializeBucket } from "./minio.js";
 import fetchingRouter from "./features/tmdb-fetching/fetching-controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,9 +26,10 @@ app.use(express.json());
 app.use("/api/user", userRouter);
 app.use("/tmdb", fetchingRouter);
 
-const startServer = async () => {
+export const startServer = async () => {
   try {
     await initializeDatabase();
+    await initializeBucket();
     app.listen(EXPRESS_PORT);
   } catch (error) {
     console.error("Failed to start server", error);
@@ -35,4 +37,7 @@ const startServer = async () => {
   }
 };
 
-startServer();
+const isMainModule = process.argv[1].includes("server.js");
+if (isMainModule) {
+  startServer();
+}
