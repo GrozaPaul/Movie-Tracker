@@ -36,5 +36,11 @@ export const User = new EntitySchema({
       name: "profile_picture",
     },
   },
-  relations: {},
+  relations: {
+    watchedMovies: {
+      type: "one-to-many",
+      target: "Watched",
+      inverseSide: "user",
+    },
+  },
 });

@@ -1,0 +1,35 @@
+import * as watchedRepository from "./watched-repository.js";
+import * as watchedDto from "./watched-dto.js";
+
+export const markAsWatched = async (req, res) => {
+  try {
+    const { error, value } = watchedDto.saveWatchedMovie.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    const existing = await watchedRepository.findOne(
+      value.userId,
+      value.movieId,
+    );
+    const watched = await watchedRepository.saveOrUpdateWatched(value);
+
+    const statusCode = existing ? 200 : 201;
+    res.status(statusCode).json({ success: true, watched });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getAllWatchedMoviesOfUser = async (req, res) => {
+  try {
+    const userId = parseInt(req.params.userId);
+
+    const watchedMovies =
+      await watchedRepository.getAllWatchedMoviesOfUser(userId);
+    res.status(200).json({ success: true, watchedMovies });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

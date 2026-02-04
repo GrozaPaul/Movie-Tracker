@@ -34,6 +34,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile_backend
+    command: npm run dev
     container_name: backend
     ports:
       - "${EXPRESS_PORT}:${EXPRESS_PORT}"
