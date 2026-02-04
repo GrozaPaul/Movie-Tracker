@@ -1,5 +1,6 @@
 import express from "express";
 import userRouter from "./features/user/user-routes.js";
+import watchedRouter from "./features/watched/watched-routes.js";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
@@ -24,6 +25,7 @@ app.use(express.json());
 // });
 
 app.use("/api/user", userRouter);
+app.use("/api/watched", watchedRouter);
 app.use("/tmdb", fetchingRouter);
 
 export const startServer = async () => {

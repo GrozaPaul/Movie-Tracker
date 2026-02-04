@@ -11,6 +11,7 @@ import { StudioMovies } from "./features/movie/studio-movies-entity.js";
 import { MovieGenre } from "./features/movie/movie-genre-entity.js";
 import { Movie } from "./features/movie/movie-entity.js";
 import { MovieCountry } from "./features/movie/movie-country-entity.js";
+import { Watched } from "./features/watched/watched-entity.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,7 @@ export const AppDataSource = new DataSource({
     StudioMovies,
     MovieGenre,
     MovieCountry,
+    Watched,
   ],
   migrations: ["migrations/**/*.js"],
   migrationsTableName: "migrations",
