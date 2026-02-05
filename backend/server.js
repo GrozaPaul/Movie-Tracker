@@ -1,6 +1,7 @@
 import express from "express";
 import userRouter from "./features/user/user-routes.js";
 import watchedRouter from "./features/watched/watched-routes.js";
+import watchlistRouter from "./features/watchlist/watchlist-routes.js";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
@@ -20,12 +21,9 @@ const app = express();
 app.use(morgan(NODE_ENV === "development" ? "dev" : "combined"));
 app.use(express.json());
 
-// app.get("/", (req, res) => {
-//   res.send("Root");
-// });
-
 app.use("/api/user", userRouter);
 app.use("/api/watched", watchedRouter);
+app.use("/api/watchlist", watchlistRouter);
 app.use("/tmdb", fetchingRouter);
 
 export const startServer = async () => {

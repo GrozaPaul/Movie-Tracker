@@ -42,5 +42,15 @@ export const User = new EntitySchema({
       target: "Watched",
       inverseSide: "user",
     },
+    watchlistedMovies: {
+      type: "one-to-many",
+      target: "Watched",
+      inverseSide: "user",
+    },
+    taggedMovies: {
+      type: "one-to-many",
+      target: "Tag",
+      inverseSide: "user",
+    },
   },
 });
