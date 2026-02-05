@@ -10,5 +10,6 @@ router.get(
   authenticate,
   watchedController.getAllWatchedMoviesOfUser,
 );
+router.delete("/", authenticate, watchedController.removeWatchedMovie);
 
 export default router;

@@ -1,14 +1,25 @@
 import { Watched } from "./watched-entity.js";
 import { AppDataSource } from "../../typeorm-config.js";
+import * as watchlistRepository from "../watchlist/watchlist-repository.js";
 
 const watchedRepository = AppDataSource.getRepository(Watched);
 
 export const saveOrUpdateWatched = async (watchedData) => {
+  const userId = watchedData.userId;
+  const movieId = watchedData.movieId;
+
+  let removedFromWatchlist = false;
+  const isMovieInWatchlist = await watchlistRepository.movieExistsInWatchlist(
+    userId,
+    movieId,
+  );
+  if (isMovieInWatchlist !== null) {
+    removedFromWatchlist = true;
+    await watchlistRepository.removeFromWatchlist({ userId, movieId });
+  }
+
   const existing = await watchedRepository.findOne({
-    where: {
-      userId: watchedData.userId,
-      movieId: watchedData.movieId,
-    },
+    where: { userId, movieId },
   });
 
   const updates = {};
@@ -19,16 +30,17 @@ export const saveOrUpdateWatched = async (watchedData) => {
       updates.isFavorite = watchedData.isFavorite;
 
     if (Object.keys(updates).length > 0) {
-      await watchedRepository.update(
-        { userId: watchedData.userId, movieId: watchedData.movieId },
-        updates,
-      );
+      await watchedRepository.update({ userId, movieId }, updates);
     }
 
-    return await findOne(watchedData.userId, watchedData.movieId);
+    return await findOne(userId, movieId);
   }
 
-  return await watchedRepository.save(watchedData);
+  const saved = await watchedRepository.save(watchedData);
+  return {
+    saved,
+    "Removed from watchlist": removedFromWatchlist,
+  };
 };
 
 export const findOne = async (userId, movieId) => {
@@ -42,5 +54,22 @@ export const getAllWatchedMoviesOfUser = async (userId) => {
     where: { userId },
     order: { watchedAt: "DESC" },
     relations: ["movie"],
+    select: {
+      userId: true,
+      isFavorite: true,
+      rating: true,
+      review: true,
+      watchedAt: true,
+      movie: {
+        movieId: true,
+        title: true,
+        releaseDate: true,
+        runtime: true,
+      },
+    },
   });
+};
+
+export const removeWatchedMovie = async (userId, movieId) => {
+  return await watchedRepository.delete({ userId, movieId });
 };
