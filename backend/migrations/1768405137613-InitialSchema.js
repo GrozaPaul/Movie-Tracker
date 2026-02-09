@@ -91,7 +91,7 @@ export class InitialSchema1768405137613 {
         "list_name" varchar(255),
         "description" text,
         "created_at" timestamp DEFAULT (now()),
-        "is_public" boolean DEFAULT false
+        "is_public" boolean DEFAULT false 
       )
     `);
 

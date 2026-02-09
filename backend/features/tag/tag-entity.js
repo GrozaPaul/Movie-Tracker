@@ -12,10 +12,11 @@ export const Tag = new EntitySchema({
     movieId: {
       type: "bigint",
       primary: true,
-      name: "movieId",
+      name: "movie_id",
     },
     tagName: {
       type: "varchar",
+      primary: true,
       length: 255,
       name: "tag_name",
     },
