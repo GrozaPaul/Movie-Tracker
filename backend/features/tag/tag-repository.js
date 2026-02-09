@@ -2,19 +2,33 @@ import { Tag } from "./tag-entity.js";
 import { Watched } from "../watched/watched-entity.js";
 import { AppDataSource } from "../../typeorm-config.js";
 
-const tagRepository = AppDataSource.getRepository(Tag);
+export const tagRepository = AppDataSource.getRepository(Tag);
 const watchedRepository = AppDataSource.getRepository(Watched);
 
-export const getAllTags = async (userId) => {
-  return await tagRepository.find({
+export const getUserTags = async (userId) => {
+  const tags = await tagRepository.find({
     where: { userId },
     select: {
       tagName: true,
     },
   });
+
+  const tagNames = tags.map((tag) => tag.tagName);
+  return [...new Set(tagNames)];
 };
 
-export const getAllMoviesForTag = async (userId, tagName) => {
+export const getMovieTags = async (userId, movieId) => {
+  const tags = await tagRepository.find({
+    where: { userId, movieId },
+    select: {
+      tagName: true,
+    },
+  });
+
+  return tags.map((tag) => tag.tagName);
+};
+
+export const getMoviesByTag = async (userId, tagName) => {
   const tags = await tagRepository.find({
     where: { userId, tagName },
     select: {
@@ -44,6 +58,10 @@ export const getAllMoviesForTag = async (userId, tagName) => {
   return result;
 };
 
-export const addTagToMovie = async (tagData) => {};
+export const addTagToMovie = async (tagData) => {
+  return await tagRepository.save(tagData);
+};
 
-export const removeTagFromMovie = async (tagData) => {};
+export const removeTagFromMovie = async (tagData) => {
+  return await tagRepository.delete(tagData);
+};

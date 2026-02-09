@@ -95,5 +95,10 @@ export const Movie = new EntitySchema({
       target: "Tag",
       inverseSide: "movie",
     },
+    listed: {
+      type: "one-to-many",
+      target: "ListMovie",
+      inverseSide: "movie",
+    },
   },
 });

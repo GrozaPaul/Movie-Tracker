@@ -44,12 +44,17 @@ export const User = new EntitySchema({
     },
     watchlistedMovies: {
       type: "one-to-many",
-      target: "Watched",
+      target: "Watchlist",
       inverseSide: "user",
     },
     taggedMovies: {
       type: "one-to-many",
       target: "Tag",
+      inverseSide: "user",
+    },
+    lists: {
+      type: "one-to-many",
+      target: "List",
       inverseSide: "user",
     },
   },

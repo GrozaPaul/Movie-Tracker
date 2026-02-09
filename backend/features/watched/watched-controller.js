@@ -38,13 +38,16 @@ export const removeWatchedMovie = async (req, res) => {
   try {
     const { userId, movieId } = req.body;
 
-    const result = await watchedRepository.removeWatchedMovie(userId, movieId);
+    const result = await watchedRepository.removeWatchedMovie(
+      parseInt(userId),
+      parseInt(movieId),
+    );
 
     if (result.affected === 0) {
       return res.status(404).json({ error: "Movie not found in watched list" });
     }
 
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, result });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

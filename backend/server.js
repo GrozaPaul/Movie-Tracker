@@ -2,6 +2,8 @@ import express from "express";
 import userRouter from "./features/user/user-routes.js";
 import watchedRouter from "./features/watched/watched-routes.js";
 import watchlistRouter from "./features/watchlist/watchlist-routes.js";
+import tagRouter from "./features/tag/tag-routes.js";
+import listRouter from "./features/list/list-routes.js";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
@@ -24,6 +26,8 @@ app.use(express.json());
 app.use("/api/user", userRouter);
 app.use("/api/watched", watchedRouter);
 app.use("/api/watchlist", watchlistRouter);
+app.use("/api/tag", tagRouter);
+app.use("/api/list", listRouter);
 app.use("/tmdb", fetchingRouter);
 
 export const startServer = async () => {

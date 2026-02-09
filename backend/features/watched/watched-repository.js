@@ -1,6 +1,7 @@
 import { Watched } from "./watched-entity.js";
 import { AppDataSource } from "../../typeorm-config.js";
 import * as watchlistRepository from "../watchlist/watchlist-repository.js";
+import { tagRepository } from "../tag/tag-repository.js";
 
 const watchedRepository = AppDataSource.getRepository(Watched);
 
@@ -71,5 +72,13 @@ export const getAllWatchedMoviesOfUser = async (userId) => {
 };
 
 export const removeWatchedMovie = async (userId, movieId) => {
-  return await watchedRepository.delete({ userId, movieId });
+  const tagResult = await tagRepository.delete({ userId, movieId });
+
+  const watchedResult = await watchedRepository.delete({ userId, movieId });
+
+  return {
+    movieDeletedFromWatched: movieId,
+    watchedDeleted: watchedResult.affected,
+    tagsDeletedOnMovie: tagResult.affected,
+  };
 };
