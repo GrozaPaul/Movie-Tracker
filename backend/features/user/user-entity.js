@@ -57,5 +57,10 @@ export const User = new EntitySchema({
       target: "List",
       inverseSide: "user",
     },
+    plannedMovies: {
+      type: "one-to-many",
+      target: "Plan",
+      inverseSide: "user",
+    },
   },
 });
