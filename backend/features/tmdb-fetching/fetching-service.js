@@ -77,7 +77,13 @@ const filterPersonIdsToBeNew = async (personIds) => {
 };
 
 const filterMovies = (movies) => {
-  return movies.filter((movie) => Number(movie.runtime) >= 60);
+  return movies.filter(
+    (movie) =>
+      Number(movie.runtime) >= 60 &&
+      movie.overview !== "" &&
+      movie.poster_path !== null &&
+      movie.backdrop_path !== null,
+  );
 };
 
 export const downloadMovieImages = async (movie) => {

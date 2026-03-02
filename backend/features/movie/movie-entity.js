@@ -53,6 +53,11 @@ export const Movie = new EntitySchema({
       type: "varchar",
       length: 255,
     },
+    embeddingJson: {
+      type: "json",
+      nullable: true,
+      name: "embedding_json",
+    },
   },
   relations: {
     genres: {
