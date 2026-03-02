@@ -28,15 +28,19 @@ export const fetchMovieIdsByDiscoverTMDB = async (options) => {
       page++
     ) {
       const url =
-        `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US` +
-        `&page=${page}` +
-        `${primaryReleaseYear !== "" ? `&primary_release_year=${primaryReleaseYear}` : ""}` +
-        `${primaryReleaseDateGte !== "" ? `&primary_release_date.gte=${primaryReleaseDateGte}` : ""}` +
-        `${primaryReleaseDateLte !== "" ? `&primary_release_date.lte=${primaryReleaseDateLte}` : ""}` +
-        `&sort_by=${sortBy}` +
-        `${withOriginCountry !== "" ? `&with_origin_country=${withOriginCountry}` : ""}` +
-        `${withOriginalLanguage !== "" ? `&with_original_language=${withOriginalLanguage}` : ""}` +
-        `&with_runtime.gte=60`;
+        "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&" +
+        `page=${page}` +
+        "&sort_by=revenue.desc&vote_count.gte=1000&with_runtime.gte=60";
+
+      // `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US` +
+      // `&page=${page}` +
+      // `${primaryReleaseYear !== "" ? `&primary_release_year=${primaryReleaseYear}` : ""}` +
+      // `${primaryReleaseDateGte !== "" ? `&primary_release_date.gte=${primaryReleaseDateGte}` : ""}` +
+      // `${primaryReleaseDateLte !== "" ? `&primary_release_date.lte=${primaryReleaseDateLte}` : ""}` +
+      // `&sort_by=${sortBy}` +
+      // `${withOriginCountry !== "" ? `&with_origin_country=${withOriginCountry}` : ""}` +
+      // `${withOriginalLanguage !== "" ? `&with_original_language=${withOriginalLanguage}` : ""}` +
+      // `&with_runtime.gte=60`;
 
       batch.push(
         fetch(url, {

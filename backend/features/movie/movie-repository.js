@@ -1,7 +1,7 @@
 import { AppDataSource } from "../../typeorm-config.js";
 import { Movie } from "./movie-entity.js";
 
-const movieRepository = AppDataSource.getRepository(Movie);
+export const movieRepository = AppDataSource.getRepository(Movie);
 
 export const saveMovieFromTMDB = async (movieData) => {
   const movie = movieRepository.create(movieData);

@@ -6,6 +6,7 @@ gen
 node_modules/
 
 .env
+.venv
 
 movie_tracker_uc.png
 migration-template.txt
