@@ -5,6 +5,7 @@ import watchlistRouter from "./features/watchlist/watchlist-routes.js";
 import tagRouter from "./features/tag/tag-routes.js";
 import listRouter from "./features/list/list-routes.js";
 import discoverRouter from "./features/discover/discover-routes.js";
+import planRouter from "./features/plan/plan-routes.js";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
@@ -30,6 +31,7 @@ app.use("/api/watchlist", watchlistRouter);
 app.use("/api/tag", tagRouter);
 app.use("/api/list", listRouter);
 app.use("/api/discover", discoverRouter);
+app.use("/api/plan", planRouter);
 app.use("/tmdb", fetchingRouter);
 
 export const startServer = async () => {
