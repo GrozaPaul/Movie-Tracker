@@ -3,7 +3,7 @@ import { AppDataSource } from "../../typeorm-config.js";
 import * as watchlistRepository from "../watchlist/watchlist-repository.js";
 import { tagRepository } from "../tag/tag-repository.js";
 
-const watchedRepository = AppDataSource.getRepository(Watched);
+export const watchedRepository = AppDataSource.getRepository(Watched);
 
 export const saveOrUpdateWatched = async (watchedData) => {
   const userId = watchedData.userId;
