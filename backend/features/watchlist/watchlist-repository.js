@@ -24,3 +24,18 @@ export const getAllWatchlistedMoviesOfUser = async (userId) => {
     relations: ["movie"],
   });
 };
+
+export const getLastThreeAdded = async (userId) => {
+  return await watchlistRepository.find({
+    where: { userId },
+    select: { movieId: true },
+    order: { addedAt: "DESC" },
+    take: 3,
+  });
+};
+
+export const noOfWatchlistedMovies = async (userId) => {
+  return await watchlistRepository.count({
+    where: { userId },
+  });
+};

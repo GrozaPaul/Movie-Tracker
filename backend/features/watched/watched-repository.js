@@ -71,6 +71,33 @@ export const getAllWatchedMoviesOfUser = async (userId) => {
   });
 };
 
+export const getLastFourWatched = async (userId) => {
+  return await watchedRepository.find({
+    where: { userId },
+    order: { watchedAt: "DESC" },
+    relations: ["movie"],
+    select: {
+      userId: true,
+      rating: true,
+      movieId: true,
+      movie: {
+        movieId: true,
+        title: true,
+        releaseDate: true,
+      },
+    },
+    take: 4,
+    relationLoadStrategy: "query",
+  });
+};
+
+export const getAllUserRatings = async (userId) => {
+  return await watchedRepository.find({
+    where: { userId },
+    select: { rating: true },
+  });
+};
+
 export const removeWatchedMovie = async (userId, movieId) => {
   const tagResult = await tagRepository.delete({ userId, movieId });
 

@@ -7,6 +7,8 @@ import listRouter from "./features/list/list-routes.js";
 import discoverRouter from "./features/discover/discover-routes.js";
 import planRouter from "./features/plan/plan-routes.js";
 import statsRouter from "./features/stats/stats-routes.js";
+import profileRouter from "./features/profile/profile-routes.js";
+import movieRouter from "./features/movie/movie-routes.js";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
@@ -34,6 +36,8 @@ app.use("/api/list", listRouter);
 app.use("/api/discover", discoverRouter);
 app.use("/api/plan", planRouter);
 app.use("/api/stats", statsRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/movie", movieRouter);
 app.use("/tmdb", fetchingRouter);
 
 export const startServer = async () => {
