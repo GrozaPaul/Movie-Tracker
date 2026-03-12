@@ -1,10 +1,10 @@
-import { Movie } from "../movie/movie-entity.js";
+import { Movie } from "../movie/entities/movie-entity.js";
 import { Person } from "../person/person-entity.js";
-import { MovieGenre } from "../movie/movie-genre-entity.js";
+import { MovieGenre } from "../movie/entities/movie-genre-entity.js";
 import { MovieActor } from "../person/movie-actor-entity.js";
 import { MovieDirector } from "../person/movie-director-entity.js";
-import { StudioMovies } from "../movie/studio-movies-entity.js";
-import { MovieCountry } from "../movie/movie-country-entity.js";
+import { StudioMovies } from "../movie/entities/studio-movies-entity.js";
+import { MovieCountry } from "../movie/entities/movie-country-entity.js";
 import { AppDataSource, initializeDatabase } from "../../typeorm-config.js";
 
 const movieRepository = AppDataSource.getRepository(Movie);

@@ -1,7 +1,7 @@
 import { AppDataSource } from "../../typeorm-config.js";
 import { User } from "./user-entity.js";
 
-const userRepository = AppDataSource.getRepository(User);
+export const userRepository = AppDataSource.getRepository(User);
 
 export const getAllUsers = async () => {
   return await userRepository.find();

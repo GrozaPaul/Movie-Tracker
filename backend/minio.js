@@ -20,13 +20,26 @@ export const initializeBucket = async () => {
     } else {
       console.log(`Bucket ${BUCKET_NAME} already exists`);
     }
+
+    const policy = {
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Effect: "Allow",
+          Principal: { AWS: ["*"] },
+          Action: ["s3:GetObject"],
+          Resource: [`arn:aws:s3:::${BUCKET_NAME}/*`],
+        },
+      ],
+    };
+    await minioClient.setBucketPolicy(BUCKET_NAME, JSON.stringify(policy));
   } catch (error) {
     console.error("MinIO initialization error:", error);
   }
 };
 
 export const getImageUrl = (objectName) => {
-  return `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${BUCKET_NAME}/${objectName}`;
+  return `http://localhost:${process.env.MINIO_PORT}/${BUCKET_NAME}/${objectName}`;
 };
 
 export const uploadImageFromUrl = async (objectName, imageUrl) => {
