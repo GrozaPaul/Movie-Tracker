@@ -1,5 +1,6 @@
 import * as watchedRepository from "./watched-repository.js";
 import * as watchedDto from "./watched-dto.js";
+import { getImageUrl } from "../../minio.js";
 
 export const markAsWatched = async (req, res) => {
   try {
@@ -28,7 +29,13 @@ export const getAllWatchedMoviesOfUser = async (req, res) => {
 
     const watchedMovies =
       await watchedRepository.getAllWatchedMoviesOfUser(userId);
-    res.status(200).json({ success: true, watchedMovies });
+
+    watchedMovies.forEach((e) => {
+      e.movie.posterUrl = getImageUrl(`posters/${e.movie.movieId}_poster.jpg`);
+      e.movie.releaseDate = e.movie.releaseDate.slice(0, 4);
+    });
+
+    res.status(200).json(watchedMovies);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

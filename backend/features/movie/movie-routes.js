@@ -4,6 +4,7 @@ import { authenticate } from "../../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", authenticate, movieController.getAllMovies);
+router.get("/all", authenticate, movieController.getAllMovies);
+router.get("/", authenticate, movieController.getMovie);
 
 export default router;

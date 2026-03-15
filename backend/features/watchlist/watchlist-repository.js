@@ -22,6 +22,15 @@ export const getAllWatchlistedMoviesOfUser = async (userId) => {
     where: { userId },
     order: { addedAt: "DESC" },
     relations: ["movie"],
+    select: {
+      movieId: true,
+      addedAt: true,
+      movie: {
+        movieId: true,
+        title: true,
+        releaseDate: true,
+      },
+    },
   });
 };
 

@@ -1,4 +1,5 @@
 import * as watchlistRepository from "./watchlist-repository.js";
+import { getImageUrl } from "../../minio.js";
 
 export const addToWatchlist = async (req, res) => {
   try {
@@ -17,7 +18,13 @@ export const getAllWatchlistedMoviesOfUser = async (req, res) => {
     const userId = parseInt(req.params.userId);
     const watchlistedMovies =
       await watchlistRepository.getAllWatchlistedMoviesOfUser(userId);
-    res.status(200).json({ success: true, watchlistedMovies });
+
+    watchlistedMovies.forEach((e) => {
+      e.movie.posterUrl = getImageUrl(`posters/${e.movie.movieId}_poster.jpg`);
+      e.movie.releaseDate = e.movie.releaseDate.slice(0, 4);
+    });
+
+    res.status(200).json(watchlistedMovies);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -13,6 +13,13 @@ export const getUserById = async (userId) => {
   });
 };
 
+export const getUsernameById = async (userId) => {
+  return await userRepository.findOne({
+    where: { userId },
+    select: { username: true },
+  });
+};
+
 export const getUserByUsername = async (username) => {
   return await userRepository.findOne({
     where: { username },
